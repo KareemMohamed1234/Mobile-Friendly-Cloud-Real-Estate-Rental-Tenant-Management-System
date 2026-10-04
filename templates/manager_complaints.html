@@ -1,0 +1,29 @@
+{% extends "manager_base.html" %}
+{% block title %}Complaints{% endblock %}
+{% block crumb %}{{ self.title() }}{% endblock %}
+{% block content %}
+<h1>Complaints</h1>
+
+{% if complaints %}
+    {% for c in complaints %}
+    <a href="/manager/complaint/{{ c.complaint_reference }}" class="complaint-link">
+        <div class="details-card payment-row">
+            <div>
+                <p>
+                    {% if c.priority in ['Urgent', 'Emergency'] %}🔴{% endif %}
+                    <strong>{{ c.complaint_reference }}</strong> — {{ c.subject }}
+                </p>
+                <p class="text-muted">
+                    {{ c.properties.unit_number if c.properties else '-' }} ·
+                    Tenant: {{ c.tenants.full_name if c.tenants else '-' }} ·
+                    {{ c.created_at[:10] }}
+                </p>
+            </div>
+            <span class="badge badge-pending">{{ c.status }}</span>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div class="empty-state"><p>No complaints.</p></div>
+{% endif %}
+{% endblock %}

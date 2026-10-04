@@ -1,0 +1,64 @@
+{% macro icon(name) %}
+{%- if name == 'bed' -%}<svg class="ico" viewBox="0 0 24 24"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M7 11.5h.01"/></svg>
+{%- elif name == 'bath' -%}<svg class="ico" viewBox="0 0 24 24"><path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-3ZM6 12V6a2 2 0 0 1 3.5-1.3M7 19l-1 2M17 19l1 2"/></svg>
+{%- elif name == 'users' -%}<svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M16 5.2a3.2 3.2 0 0 1 0 5.6M18 14.5a6 6 0 0 1 3 5.5"/></svg>
+{%- elif name == 'pin' -%}<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+{%- elif name == 'wallet' -%}<svg class="ico" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2ZM16 14h.01"/></svg>
+{%- endif -%}
+{% endmacro %}
+
+{% macro status_badge(status) %}
+<span class="badge {{ {'Available':'badge-available','Reserved':'badge-pending','Occupied':'badge-occupied'}.get(status,'badge-due') }}">{{ status }}</span>
+{% endmacro %}
+
+{% macro property_card(p, manager=False) %}
+{% set link = url_for('manager_property_edit', property_id=p.id) if manager else url_for('property_details', property_id=p.id) %}
+<div class="property-card">
+    <a class="card-photo" href="{{ link }}">
+        {% if p.main_photo %}
+            <img src="{{ p.main_photo.image_url|img(800) }}" alt="{{ p.property_type }} {{ p.unit_number }}" class="property-img" loading="lazy"
+                 onerror="this.onerror=null;this.src='/static/images/placeholder.svg'">
+        {% else %}
+            <img src="/static/images/placeholder.svg" alt="" class="property-img">
+        {% endif %}
+        <span class="status-chip">{{ status_badge(p.status) }}</span>
+        <span class="price-tag">QAR {{ p.monthly_rent|money }} <small>/ month</small></span>
+        <span class="photo-count">📷 {{ p.photo_count }}</span>
+    </a>
+    <div class="property-info">
+        <h3>{{ p.property_type }} — {{ p.unit_number }}</h3>
+        <p class="property-location">{{ icon('pin') }} {{ p.buildings.building_name if p.buildings else '' }}{% if p.buildings and p.buildings.city %}, {{ p.buildings.city }}{% endif %}</p>
+        <div class="specs">
+            <span>{{ icon('bed') }} {{ (p.bedrooms ~ ' bed') if p.bedrooms else 'Studio' }}</span>
+            <span>{{ icon('bath') }} {{ p.bathrooms }} bath</span>
+            <span>{{ icon('users') }} up to {{ p.maximum_occupants }}</span>
+        </div>
+        <a href="{{ link }}" class="button button-primary">{{ 'Manage' if manager else 'View property' }}</a>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro gallery(photos, label='Property') %}
+{% if photos %}
+<div class="pgallery" data-gallery>
+    <div class="pg-stage">
+        <img class="pg-hero" src="{{ photos[0].image_url|img(1400) }}" alt="{{ photos[0].caption or label }}"
+             onerror="this.onerror=null;this.src='/static/images/placeholder.svg'">
+        <button type="button" class="pg-nav pg-prev" aria-label="Previous photo">‹</button>
+        <button type="button" class="pg-nav pg-next" aria-label="Next photo">›</button>
+        <span class="pg-counter">1 / {{ photos|length }}</span>
+        <span class="pg-caption">{{ photos[0].caption or '' }}</span>
+    </div>
+    <div class="pg-thumbs">
+        {% for ph in photos %}
+        <button type="button" class="pg-thumb {{ 'active' if loop.first }}" data-src="{{ ph.image_url|img(1400) }}" data-caption="{{ ph.caption or '' }}">
+            <img src="{{ ph.image_url|img(240) }}" alt="{{ ph.caption or label }}" loading="lazy"
+                 onerror="this.onerror=null;this.src='/static/images/placeholder.svg'">
+        </button>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="placeholder-img large">Photos coming soon</div>
+{% endif %}
+{% endmacro %}

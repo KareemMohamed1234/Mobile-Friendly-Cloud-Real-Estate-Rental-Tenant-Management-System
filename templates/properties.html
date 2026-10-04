@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "_macros.html" import property_card %}
+{% block title %}Available Properties{% endblock %}
+{% block content %}
+<h1>Available Properties</h1>
+
+<form action="/properties" method="GET" class="filter-bar">
+    <select name="type" onchange="this.form.submit()">
+        <option value="">All types</option>
+        {% for t in PROPERTY_TYPES %}<option {{ 'selected' if t == property_type }}>{{ t }}</option>{% endfor %}
+    </select>
+    <select name="city" onchange="this.form.submit()">
+        <option value="">All locations</option>
+        {% for c in cities %}<option {{ 'selected' if c == city }}>{{ c }}</option>{% endfor %}
+    </select>
+    <input type="number" name="max_rent" value="{{ max_rent }}" placeholder="Max rent (QAR)" min="0">
+    <button type="submit" class="button button-primary">Search</button>
+</form>
+
+{% if properties %}
+    <p class="results-count">{{ properties|length }} {{ 'property' if properties|length == 1 else 'properties' }} found</p>
+    <div class="property-grid">
+        {% for p in properties %}{{ property_card(p) }}{% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>No properties match your search.</p>
+        <a href="/properties" class="button">Clear filters</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ complaint.complaint_reference }}{% endblock %}
+{% block content %}
+<div class="details-header">
+    <h1>{{ complaint.subject }}</h1>
+    <span class="badge badge-{{ 'urgent' if complaint.priority in ['Urgent','Emergency'] else 'pending' }}">{{ complaint.priority }}</span>
+</div>
+<p class="text-muted">{{ complaint.complaint_reference }} · Category: {{ complaint.category }}</p>
+<p>Status: <span class="badge badge-pending">{{ complaint.status }}</span></p>
+{% if complaint.assigned_to %}<p>👷 Assigned to: {{ complaint.assigned_to }}</p>{% endif %}
+{% if complaint.resolution %}<p class="notice">🔧 {{ complaint.resolution }}</p>{% endif %}
+
+<h2>💬 Conversation</h2>
+<div class="comments">
+    {% for c in comments %}
+    <div class="comment {{ 'comment-manager' if c.author_role != 'TENANT' else 'comment-tenant' }}">
+        <p class="comment-author">{{ c.author_name }} ({{ c.author_role }})</p>
+        <p>{{ c.comment }}</p>
+        <p class="text-muted comment-time">{{ c.created_at[:16].replace('T', ' ') }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% if complaint.status == 'Resolved - Waiting for Tenant' %}
+<div class="details-card">
+    <h3>Was the repair completed successfully?</h3>
+    <form method="POST" class="inline-buttons">
+        <button name="resolution_check" value="fixed" class="button button-primary">✅ Fixed</button>
+        <button name="resolution_check" value="not_fixed" class="button button-danger">❌ Not Fixed</button>
+    </form>
+</div>
+{% endif %}
+
+<form method="POST" class="form-card">
+    <label>Add a comment</label>
+    <textarea name="comment" rows="3" required></textarea>
+    <button type="submit" class="button button-primary">Send</button>
+</form>
+{% endblock %}

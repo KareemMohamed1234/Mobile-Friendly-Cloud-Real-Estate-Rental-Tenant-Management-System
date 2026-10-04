@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "_macros.html" import gallery, status_badge, icon %}
+{% block title %}{{ property.property_type }} — {{ property.unit_number }}{% endblock %}
+{% block content %}
+<div class="details-header">
+    <h1>{{ property.property_type }} — {{ property.unit_number }}</h1>
+    {{ status_badge(property.status) }}
+</div>
+<p class="property-location">{{ icon('pin') }} {{ property.buildings.building_name if property.buildings else '' }}{% if property.buildings and property.buildings.address %} · {{ property.buildings.address }}{% endif %}</p>
+
+<div class="details-layout">
+    <div>
+        {{ gallery(photos, property.property_type ~ ' ' ~ property.unit_number) }}
+        <div class="details-card">
+            <h3>About this place</h3>
+            <div class="facts">
+                <div>{{ icon('bed') }}<strong>{{ property.bedrooms or 'Studio' }}</strong><small>Bedrooms</small></div>
+                <div>{{ icon('bath') }}<strong>{{ property.bathrooms }}</strong><small>Bathrooms</small></div>
+                <div>{{ icon('users') }}<strong>{{ property.maximum_occupants }}</strong><small>Max occupants</small></div>
+                <div>{{ icon('wallet') }}<strong>QAR {{ property.security_deposit|money }}</strong><small>Deposit</small></div>
+            </div>
+            {% if property.description %}<p class="description">{{ property.description }}</p>{% endif %}
+        </div>
+    </div>
+
+    <aside class="details-card book-card">
+        <p class="rent big">QAR {{ property.monthly_rent|money }} <small>/ month</small></p>
+        <p class="text-muted">Security deposit: QAR {{ property.security_deposit|money }}</p>
+        {% if property.status == 'Available' %}
+            <a href="/property/{{ property.id }}/apply" class="button button-primary button-large">Apply / Book now</a>
+            <p class="text-muted text-center">Pay by bank transfer · confirmed by the manager</p>
+        {% else %}
+            <div class="notice">This property is currently <strong>{{ property.status }}</strong> and can't be booked.</div>
+            <a href="/properties" class="button button-large">See other properties</a>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

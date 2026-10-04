@@ -1,0 +1,45 @@
+{% extends "manager_base.html" %}
+{% block title %}{{ complaint.complaint_reference }}{% endblock %}
+{% block crumb %}{{ self.title() }}{% endblock %}
+{% block content %}
+<div class="details-header">
+    <h1>{{ complaint.subject }}</h1>
+    <span class="badge badge-{{ 'urgent' if complaint.priority in ['Urgent','Emergency'] else 'pending' }}">{{ complaint.priority }}</span>
+</div>
+<p>{{ complaint.complaint_reference }} · {{ complaint.category }}</p>
+<p>Property: <strong>{{ complaint.properties.unit_number if complaint.properties else '-' }}</strong></p>
+<p>Tenant: <strong>{{ complaint.tenants.full_name if complaint.tenants else '-' }}</strong></p>
+<p>Description: {{ complaint.description }}</p>
+
+<h2>Update Complaint</h2>
+<form method="POST" class="form-card">
+    <label>Status</label>
+    <select name="status">
+        {% for s in ['Open', 'Assigned', 'In Progress', 'Resolved - Waiting for Tenant', 'Closed', 'Reopened'] %}
+        <option {{ 'selected' if complaint.status == s }}>{{ s }}</option>
+        {% endfor %}
+    </select>
+    <label>Assigned To</label>
+    <input type="text" name="assigned_to" value="{{ complaint.assigned_to or '' }}" placeholder="e.g. Technician Ahmed">
+    <label>Resolution Notes</label>
+    <textarea name="resolution" rows="3">{{ complaint.resolution or '' }}</textarea>
+    <button type="submit" class="button button-primary">Update</button>
+</form>
+
+<h2>Conversation</h2>
+<div class="comments">
+    {% for c in comments %}
+    <div class="comment {{ 'comment-tenant' if c.author_role == 'TENANT' else 'comment-manager' }}">
+        <p class="comment-author">{{ c.author_name }} ({{ c.author_role }})</p>
+        <p>{{ c.comment }}</p>
+        <p class="text-muted comment-time">{{ c.created_at[:16].replace('T', ' ') }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<form method="POST" class="form-card">
+    <label>Add a comment</label>
+    <textarea name="comment" rows="3" required></textarea>
+    <button type="submit" class="button button-primary">Send</button>
+</form>
+{% endblock %}

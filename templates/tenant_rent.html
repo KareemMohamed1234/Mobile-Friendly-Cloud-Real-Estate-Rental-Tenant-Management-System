@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Monthly Rent{% endblock %}
+{% block content %}
+<h1>💰 Monthly Rent</h1>
+
+{% for inv in invoices %}
+<div class="details-card invoice-card">
+    <div class="invoice-header">
+        <h3>{{ inv.rent_month|rent_month }}</h3>
+        <span class="badge {{ 'badge-paid' if inv.status == 'Paid' else ('badge-pending' if inv.status == 'Pending Verification' else 'badge-due') }}">{{ inv.status }}</span>
+    </div>
+    <p>Property: {{ tenant.properties.unit_number if tenant.properties else '-' }}</p>
+    <p class="rent">QAR {{ inv.amount|money }}</p>
+    <p>Due Date: {{ inv.due_date }}</p>
+
+    {% if inv.status == 'Paid' %}
+        <p>✅ Payment Date: {{ inv.paid_at[:10] if inv.paid_at else '-' }}</p>
+        <button class="button" onclick="window.print()">Print / Download Receipt</button>
+    {% elif inv.status == 'Pending Verification' %}
+        <p class="text-muted">⏳ Receipt submitted — waiting for the manager to verify.</p>
+    {% else %}
+        <button class="button button-primary" onclick="document.getElementById('pay-{{ inv.id }}').classList.toggle('open')">Pay by Bank Transfer</button>
+
+        <div id="pay-{{ inv.id }}" class="payment-panel">
+            <h4>🏦 Bank Transfer Details</h4>
+            <p>Bank: <strong>{{ settings.bank_name }}</strong></p>
+            <p>Account Name: <strong>{{ settings.account_name }}</strong></p>
+            <p>IBAN: <strong class="iban" id="iban-{{ inv.id }}">{{ settings.iban }}</strong>
+               <button type="button" class="button button-small" onclick="copyText('iban-{{ inv.id }}')">Copy</button></p>
+            <p>Reference: <strong id="ref-{{ inv.id }}">RENT-{{ inv.id }}</strong>
+               <button type="button" class="button button-small" onclick="copyText('ref-{{ inv.id }}')">Copy</button></p>
+
+            <h4>📤 Upload your receipt</h4>
+            <form method="POST" action="/tenant/invoice/{{ inv.id }}/pay" enctype="multipart/form-data">
+                <label>Amount paid (QAR)</label>
+                <input type="number" step="0.01" name="amount" value="{{ inv.amount }}" required>
+                <label>Transfer date</label>
+                <input type="date" name="transfer_date">
+                <label>Bank reference</label>
+                <input type="text" name="bank_reference" placeholder="e.g. FT123456789">
+                <label>Receipt (photo or PDF) *</label>
+                <input type="file" name="receipt" accept="image/*,application/pdf" required>
+                <button type="submit" class="button button-primary">Submit payment</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="empty-state"><p>No rent invoices yet. The manager creates them every month.</p></div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Payment History{% endblock %}
+{% block content %}
+<h1>📜 Payment History</h1>
+
+{% if payments %}
+    {% for pay in payments %}
+    <div class="details-card payment-row">
+        <div>
+            <p><strong>QAR {{ "{:,.0f}".format(pay.amount) }}</strong> — {{ pay.payment_method }}</p>
+            <p class="text-muted">{{ pay.created_at[:10] }}
+                {% if pay.rent_invoices %} · {{ pay.rent_invoices.rent_month|rent_month }}{% endif %}</p>
+        </div>
+        <span class="badge {{ 'badge-paid' if pay.status == 'Paid' else 'badge-pending' }}">{{ pay.status }}</span>
+        {% if pay.receipt_url %}
+            <a href="/receipt/{{ pay.id }}" target="_blank" class="button button-small">View Receipt</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state"><p>No payments yet.</p></div>
+{% endif %}
+{% endblock %}

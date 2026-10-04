@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Report a Problem{% endblock %}
+{% block content %}
+<h1>🛠️ Report Maintenance Issue</h1>
+<p class="subtitle">Property: {{ tenant.properties.unit_number if tenant.properties else '-' }}</p>
+
+<form method="POST" enctype="multipart/form-data" class="form-card">
+    <label>Category *</label>
+    <select name="category" required>
+        <option>Air Conditioning</option>
+        <option>Plumbing</option>
+        <option>Electrical</option>
+        <option>Painting</option>
+        <option>Carpentry</option>
+        <option>Cleaning</option>
+        <option>Other</option>
+    </select>
+
+    <label>Priority *</label>
+    <select name="priority" required>
+        <option>Normal</option>
+        <option>Urgent</option>
+        <option>Emergency</option>
+    </select>
+
+    <label>Subject *</label>
+    <input type="text" name="subject" placeholder="e.g. Bedroom AC not cooling" required>
+
+    <label>Description *</label>
+    <textarea name="description" rows="5" required></textarea>
+
+    <label>Photo</label>
+    <input type="file" name="photo" accept="image/*">
+
+    <button type="submit" class="button button-primary button-large">Submit Complaint</button>
+</form>
+{% endblock %}

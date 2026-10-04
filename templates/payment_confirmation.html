@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Payment Submitted{% endblock %}
+{% block content %}
+<div class="confirmation-box">
+    <div class="confirmation-icon">✅</div>
+    <h1>Payment Submitted!</h1>
+    <p>Your booking reference:</p>
+    <p class="reference-big">{{ reference }}</p>
+    <p class="subtitle">Status: <span class="badge badge-pending">PENDING VERIFICATION</span></p>
+    <p>The manager will check the bank account and confirm your booking shortly.</p>
+    <a href="/" class="button button-primary">Back to Home</a>
+</div>
+{% endblock %}

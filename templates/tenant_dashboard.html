@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}My Home{% endblock %}
+{% block content %}
+<h1>Welcome {{ tenant.full_name.split(' ')[0] }} 👋</h1>
+
+<div class="details-card">
+    <h2>🏠 My Home</h2>
+    <p>{{ tenant.properties.buildings.building_name if tenant.properties else '' }} ·
+       {{ tenant.properties.unit_number if tenant.properties else '-' }} ·
+       {{ tenant.properties.property_type if tenant.properties else '' }}</p>
+    <p class="rent">Monthly Rent: QAR {{ "{:,.0f}".format(tenant.monthly_rent or 0) }}</p>
+</div>
+
+{% if invoices %}
+    {% set current = invoices[0] %}
+    <div class="rent-banner {{ 'paid' if current.status == 'Paid' else 'due' }}">
+        <h3>{{ current.rent_month|rent_month }} Rent — QAR {{ "{:,.0f}".format(current.amount) }}</h3>
+        <p>Due: {{ current.due_date }} · Status:
+            <span class="badge {{ 'badge-paid' if current.status == 'Paid' else 'badge-due' }}">{{ current.status }}</span>
+        </p>
+        {% if current.status != 'Paid' %}
+            <a href="/tenant/rent" class="button button-primary">Pay Rent</a>
+        {% endif %}
+    </div>
+{% endif %}
+
+<div class="menu-grid">
+    <a href="/tenant/property" class="menu-item">🏠<span>My Property</span></a>
+    <a href="/tenant/rent" class="menu-item">💰<span>Pay Rent</span></a>
+    <a href="/tenant/payments" class="menu-item">📜<span>Payment History & Receipts</span></a>
+    <a href="/tenant/complaint/new" class="menu-item">🛠️<span>Report a Problem</span></a>
+</div>
+{% endblock %}

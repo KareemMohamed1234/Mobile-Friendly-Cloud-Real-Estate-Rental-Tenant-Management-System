@@ -1,0 +1,65 @@
+{% from "_mgr.html" import ico %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Manager{% endblock %} · Property Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manager.css') }}">
+</head>
+<body class="mgr">
+{% set p = request.path %}
+{% set n = nav_counts or {'payments': 0, 'complaints': 0} %}
+<div class="m-shell">
+    <aside class="m-side" id="mSide">
+        <a class="m-brand" href="{{ url_for('manager_dashboard') }}">
+            <span class="m-brand-mark">{{ ico('home') }}</span>
+            <span><strong>Property</strong><small>Management console</small></span>
+        </a>
+        <nav class="m-nav">
+            <span class="m-nav-label">Overview</span>
+            <a href="{{ url_for('manager_dashboard') }}" class="{{ 'active' if p.startswith('/manager/dashboard') }}">{{ ico('dashboard') }}<span>Dashboard</span></a>
+            <span class="m-nav-label">Portfolio</span>
+            <a href="{{ url_for('manager_properties') }}" class="{{ 'active' if p.startswith('/manager/propert') }}">{{ ico('building') }}<span>Properties</span></a>
+            <a href="{{ url_for('manager_tenants') }}" class="{{ 'active' if p.startswith('/manager/tenant') }}">{{ ico('users') }}<span>Tenants</span></a>
+            <span class="m-nav-label">Operations</span>
+            <a href="{{ url_for('manager_payments') }}" class="{{ 'active' if p.startswith('/manager/payment') }}">{{ ico('card') }}<span>Payments</span>{% if n.payments %}<em class="m-badge">{{ n.payments }}</em>{% endif %}</a>
+            <a href="{{ url_for('manager_complaints') }}" class="{{ 'active' if p.startswith('/manager/complaint') }}">{{ ico('wrench') }}<span>Complaints</span>{% if n.complaints %}<em class="m-badge">{{ n.complaints }}</em>{% endif %}</a>
+        </nav>
+        <div class="m-side-foot">
+            <a href="/" target="_blank" rel="noopener">{{ ico('globe') }}<span>View public site</span></a>
+            <a href="{{ url_for('logout') }}">{{ ico('logout') }}<span>Log out</span></a>
+        </div>
+    </aside>
+    <div class="m-scrim" id="mScrim" onclick="toggleSide()"></div>
+
+    <div class="m-main">
+        <header class="m-top">
+            <button type="button" class="m-burger" onclick="toggleSide()" aria-label="Menu">{{ ico('menu') }}</button>
+            <div class="m-top-title">{% block crumb %}Manager{% endblock %}</div>
+            <div class="m-user">
+                <span class="m-avatar">{{ (session.get('name') or 'M')[:1]|upper }}</span>
+                <span class="m-user-txt"><strong>{{ session.get('name') }}</strong><small>Administrator</small></span>
+            </div>
+        </header>
+
+        <main class="m-content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}{% if category == 'creds' %}<button type="button" class="flash-x" onclick="this.parentElement.remove()" aria-label="Dismiss">×</button>{% endif %}</div>
+                {% endfor %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+function toggleSide() { document.body.classList.toggle('side-open'); }
+</script>
+</body>
+</html>

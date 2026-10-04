@@ -1,0 +1,53 @@
+{% extends "manager_base.html" %}
+{% from "_mgr.html" import ico %}
+{% block title %}Tenants{% endblock %}
+{% block crumb %}Tenants{% endblock %}
+{% block content %}
+<div class="m-head">
+    <div><h1>Tenants</h1><p>Tenant accounts are created by you. The login password is emailed to the tenant automatically.</p></div>
+    <div class="m-actions"><a class="button button-primary" href="#add-tenant">{{ ico('plus') }} Add tenant</a></div>
+</div>
+
+{% for t in tenants %}
+<div class="details-card">
+    <div class="invoice-header">
+        <h3>{{ t.full_name }}</h3>
+        <span class="pill {{ 'green' if t.user_id else 'amber' }}">{{ 'Account active' if t.user_id else 'No login yet' }}</span>
+    </div>
+    <p class="text-muted">{{ t.email }} · {{ t.phone or '-' }}</p>
+    <p>{{ t.properties.unit_number if t.properties else '-' }}{% if t.properties and t.properties.buildings %} · {{ t.properties.buildings.building_name }}{% endif %}
+       · QAR {{ t.monthly_rent|money }}/month</p>
+    <p class="text-muted">Contract {{ t.contract_start or '?' }} → {{ t.contract_end or '?' }}</p>
+    <div class="t-actions">
+        <form method="POST" action="/manager/tenant/{{ t.id }}/invoice">
+            <input type="month" name="month" value="{{ this_month }}" required>
+            <button class="button button-small">Create rent invoice</button>
+        </form>
+        <form method="POST" action="/manager/tenant/{{ t.id }}/credentials"
+              {% if t.user_id %}onsubmit="return confirm('Generate a NEW password and email it to {{ t.email }}? The old password stops working.')"{% endif %}>
+            <button class="button button-small {{ 'button-ghost' if t.user_id else 'button-primary' }}">{{ ico('key') }} {{ 'Reset password & email' if t.user_id else 'Send login details' }}</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="empty-state"><p>No tenants yet. A tenant is created automatically when you confirm a booking payment, or add one below.</p></div>
+{% endfor %}
+
+<h2 id="add-tenant">Add tenant manually</h2>
+<form method="POST" class="form-card">
+    <label>Full name *</label><input type="text" name="full_name" required>
+    <label>Email * <span class="text-muted">(login details will be emailed here)</span></label><input type="email" name="email" required>
+    <label>Mobile</label><input type="tel" name="phone">
+    <label>Property *</label>
+    <select name="property_id" required>
+        {% for p in free_properties %}<option value="{{ p.id }}">{{ p.unit_number }} · {{ p.property_type }} · QAR {{ p.monthly_rent|money }}</option>{% endfor %}
+    </select>
+    <div class="two-col">
+        <div><label>Contract start *</label><input type="date" name="contract_start" value="{{ today }}" required></div>
+        <div><label>Months</label><input type="number" name="months" value="12" min="1"></div>
+    </div>
+    <label>Monthly rent <span class="text-muted">(leave empty = property rent)</span></label>
+    <input type="number" step="0.01" name="monthly_rent">
+    <button type="submit" class="button button-primary">Add tenant & email login</button>
+</form>
+{% endblock %}

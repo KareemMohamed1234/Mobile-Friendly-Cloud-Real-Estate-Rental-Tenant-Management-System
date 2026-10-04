@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Choose your login{% endblock %}
+{% block content %}
+<div class="chooser">
+    <h1 class="text-center">Welcome back</h1>
+    <p class="subtitle text-center">Choose how you want to sign in</p>
+
+    <div class="role-grid role-grid-2">
+        {% for key, r in ROLES.items() %}
+        <div class="role-card" style="--role: {{ r.color }}">
+            <div class="role-photo" style="background-image: url('{{ stock(key, 800) }}')">
+                <div class="role-icon">{{ r.icon }}</div>
+            </div>
+            <div class="role-body">
+                <h2>{{ r.title }}</h2>
+                <p class="role-tag">{{ r.tagline }}</p>
+                <p class="role-blurb">{{ r.blurb }}</p>
+                <a class="button role-btn" href="{{ url_for('login_role', role=key) }}">Log in as {{ r.title }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p class="text-center browse-link">Looking for a home? <a href="/properties">Search available properties — no account needed →</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "_macros.html" import gallery %}
+{% block title %}My Property{% endblock %}
+{% block content %}
+<h1>My Property</h1>
+{% if tenant.properties %}
+<div class="details-card">
+    <h2>{{ tenant.properties.property_type }} — {{ tenant.properties.unit_number }}</h2>
+    <p>🏢 {{ tenant.properties.buildings.building_name if tenant.properties.buildings else '' }}</p>
+    <p>Contract: {{ tenant.contract_start }} → {{ tenant.contract_end }}</p>
+    <p class="rent">QAR {{ tenant.monthly_rent|money }}/month</p>
+</div>
+{{ gallery(photos, 'My property') }}
+{% endif %}
+{% endblock %}

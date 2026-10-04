@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Payment Instructions{% endblock %}
+{% block content %}
+<h1>💳 Payment</h1>
+
+<div class="details-card">
+    <p>Reference: <strong class="highlight">{{ application.application_reference }}</strong></p>
+    <p>Property: <strong>{{ application.properties.unit_number }}</strong></p>
+    <p>Amount: <strong class="rent">QAR {{ "{:,.0f}".format(application.properties.monthly_rent) }}</strong></p>
+    <p>Status: <span class="badge badge-pending">{{ application.status }}</span></p>
+</div>
+
+<h2>🏦 Bank Transfer Details</h2>
+<div class="details-card bank-card">
+    <p>Bank: <strong>{{ settings.bank_name or 'QNB' }}</strong></p>
+    <p>Account Name: <strong>{{ settings.account_name or '-' }}</strong></p>
+    <p>IBAN: <strong class="iban" id="iban">{{ settings.iban or '-' }}</strong>
+        <button class="button button-small" onclick="copyText('iban')">Copy IBAN</button></p>
+    <p>Payment Reference: <strong class="highlight" id="ref">{{ application.application_reference }}</strong>
+        <button class="button button-small" onclick="copyText('ref')">Copy Reference</button></p>
+</div>
+
+<div class="notice">
+    ⚠️ Please use the booking reference as your transfer narration so we can match your payment.
+</div>
+
+<h2>📤 Submit Your Payment</h2>
+<form method="POST" enctype="multipart/form-data" class="form-card">
+    <label>Amount Paid (QAR) *</label>
+    <input type="number" name="amount" value="{{ application.properties.monthly_rent }}" required>
+
+    <label>Transfer Date</label>
+    <input type="date" name="transfer_date">
+
+    <label>Bank Reference</label>
+    <input type="text" name="bank_reference" placeholder="e.g. FT123456789">
+
+    <label>Upload Receipt *</label>
+    <input type="file" name="receipt" accept="image/*,application/pdf" required>
+
+    <button type="submit" class="button button-primary button-large">Submit Payment</button>
+</form>
+{% endblock %}

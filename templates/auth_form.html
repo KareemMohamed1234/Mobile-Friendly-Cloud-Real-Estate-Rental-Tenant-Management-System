@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ ROLES[role].title }} Login{% endblock %}
+{% block content %}
+{% set r = ROLES[role] %}
+<div class="auth-wrap" style="--role: {{ r.color }}">
+  <div class="auth-shell">
+    <aside class="auth-side" style="--side-img: url('{{ stock(role, 1000) }}')">
+        <h2>{{ r.tagline }}</h2>
+        <p>{{ r.blurb }}</p>
+    </aside>
+
+    <section class="auth-main">
+        <div class="auth-head">
+            <div class="auth-icon">{{ r.icon }}</div>
+            <div>
+                <h1>{{ r.title }} login</h1>
+                <p>{{ r.tagline }}</p>
+            </div>
+        </div>
+
+        {% if role == 'tenant' %}
+        <div class="auth-hint">Your login details are <strong>emailed to you</strong> once the manager approves your booking. Use the email you booked with.</div>
+        {% endif %}
+
+        <form method="POST" class="auth-form" autocomplete="on" data-auth-form>
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ email or '' }}" autocomplete="email" required autofocus>
+
+            <label for="password">Password</label>
+            <div class="pw-field">
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+                <button type="button" class="pw-toggle" onclick="togglePw(this)">Show</button>
+            </div>
+
+            {% if role == 'manager' %}
+            <p class="auth-forgot"><a href="{{ url_for('manager_forgot') }}">Forgot password?</a></p>
+            {% else %}
+            <p class="auth-forgot text-muted">Lost your password? Ask the property manager to send you a new one.</p>
+            {% endif %}
+
+            <button type="submit" class="button role-btn button-large">Log in</button>
+        </form>
+
+        <p class="auth-switch">Not a {{ r.title|lower }}? <a href="{{ url_for('login_chooser') }}">Choose another login</a></p>
+    </section>
+  </div>
+</div>
+{% endblock %}

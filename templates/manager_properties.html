@@ -1,0 +1,15 @@
+{% extends "manager_base.html" %}
+{% from "_macros.html" import property_card %}
+{% block title %}Manage Properties{% endblock %}
+{% block crumb %}{{ self.title() }}{% endblock %}
+{% block content %}
+<div class="page-head">
+    <h1>Properties</h1>
+    <a href="/manager/property/new" class="button button-primary button-small">+ Add property</a>
+</div>
+<div class="property-grid">
+    {% for p in properties %}{{ property_card(p, manager=True) }}{% else %}
+    <div class="empty-state"><p>No properties yet.</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

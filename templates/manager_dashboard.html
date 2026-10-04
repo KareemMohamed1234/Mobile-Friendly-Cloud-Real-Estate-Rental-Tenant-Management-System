@@ -1,0 +1,145 @@
+{% extends "manager_base.html" %}
+{% from "_mgr.html" import ico %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}Dashboard{% endblock %}
+{% block content %}
+<div class="m-head">
+    <div>
+        <h1>{{ greeting }}, {{ session.get('name','').split(' ')[0] or 'Manager' }}</h1>
+        <p>{{ today.strftime('%A, %d %B %Y') }} · here is what is happening across your properties.</p>
+    </div>
+    <div class="m-actions">
+        <a class="button button-ghost" href="/manager/tenants">{{ ico('users') }} Add tenant</a>
+        <a class="button button-primary" href="/manager/property/new">{{ ico('plus') }} Add property</a>
+    </div>
+</div>
+
+<div class="attn">
+    {% if pending_total or open_total or new_apps %}
+        {% if pending_total %}<a href="/manager/payments"><i class="dot"></i><b>{{ pending_total }}</b> payment{{ 's' if pending_total != 1 }} to verify</a>{% endif %}
+        {% if open_total %}<a href="/manager/complaints"><i class="dot {{ 'red' if urgent else 'blue' }}"></i><b>{{ open_total }}</b> open complaint{{ 's' if open_total != 1 }}{% if urgent %} · {{ urgent }} urgent{% endif %}</a>{% endif %}
+        {% if new_apps %}<a href="/manager/payments"><i class="dot green"></i><b>{{ new_apps }}</b> booking{{ 's' if new_apps != 1 }} in progress</a>{% endif %}
+    {% else %}
+        <span><i class="dot green"></i> You are all caught up — nothing needs your attention.</span>
+    {% endif %}
+</div>
+
+<div class="kpis">
+    <div class="kpi">
+        <div class="kpi-top">Collected this month <span class="kpi-ico">{{ ico('wallet') }}</span></div>
+        <div class="kpi-value"><small>{{ currency }}</small>{{ collected|money }}</div>
+        <div class="kpi-sub">
+            {% if change is not none %}<span class="delta {{ 'up' if change >= 0 else 'down' }}">{{ '▲' if change >= 0 else '▼' }} {{ change|abs }}%</span> vs last month{% else %}Verified payments{% endif %}
+        </div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-top">Outstanding rent <span class="kpi-ico amber">{{ ico('clock') }}</span></div>
+        <div class="kpi-value"><small>{{ currency }}</small>{{ outstanding|money }}</div>
+        <div class="kpi-sub">{% if overdue_count %}<span class="delta down">{{ overdue_count }} overdue</span> invoice{{ 's' if overdue_count != 1 }}{% else %}No overdue invoices{% endif %}</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-top">Occupancy <span class="kpi-ico blue">{{ ico('building') }}</span></div>
+        <div class="kpi-value">{{ occupancy }}<small>%</small></div>
+        <div class="kpi-sub">{{ by_status.get('Occupied', 0) }} of {{ total }} units occupied · {{ by_status.get('Available', 0) }} available</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-top">Active tenants <span class="kpi-ico">{{ ico('users') }}</span></div>
+        <div class="kpi-value">{{ tenants }}</div>
+        <div class="kpi-sub"><a href="/manager/tenants">Manage tenants →</a></div>
+    </div>
+</div>
+
+<div class="m-grid wide">
+    <section class="panel">
+        <div class="panel-head"><h3>Revenue collected · last 6 months</h3><span class="text-muted">{{ currency }}</span></div>
+        <div class="bars">
+            {% for m in months %}
+            <div class="bar {{ 'now' if loop.last }}">
+                <b>{{ m.amount|money if m.amount else '' }}</b>
+                <i style="height: {{ m.pct }}%"></i>
+                <span>{{ m.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="height: 16px"></div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head"><h3>Portfolio status</h3><a href="/manager/properties">View all</a></div>
+        <div class="donut-wrap">
+            <div class="donut" style="background: {{ donut }}">
+                <div class="donut-c"><strong>{{ total }}</strong><small>units</small></div>
+            </div>
+            <ul class="legend">
+                {% for label, n, color in seg %}<li><i style="background: {{ color }}"></i>{{ label }} <b>{{ n }}</b></li>{% endfor %}
+            </ul>
+        </div>
+    </section>
+</div>
+
+<div class="m-grid">
+    <section class="panel">
+        <div class="panel-head"><h3>Payments awaiting verification</h3><a href="/manager/payments">Review all</a></div>
+        <div class="rows">
+            {% for pay in pending %}
+            {% set who = pay.tenants.full_name if pay.tenants else (pay.applications.full_name if pay.applications else '—') %}
+            {% set unit = (pay.tenants.properties.unit_number if pay.tenants and pay.tenants.properties else (pay.applications.properties.unit_number if pay.applications and pay.applications.properties else '')) %}
+            <a class="row" href="/manager/payments">
+                <span class="row-av">{{ who[:1]|upper }}</span>
+                <span class="row-main"><strong>{{ who }}</strong><small>{{ unit }}{% if unit %} · {% endif %}{{ 'New booking' if pay.applications else 'Monthly rent' }} · {{ pay.created_at[:10] }}</small></span>
+                <span class="row-end"><strong>{{ currency }} {{ pay.amount|money }}</strong><span class="pill amber">Pending</span></span>
+            </a>
+            {% else %}
+            <div class="empty-mini">{{ ico('check') }}<br>No payments waiting for verification.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head"><h3>Open complaints</h3><a href="/manager/complaints">View all</a></div>
+        <div class="rows">
+            {% for c in complaints %}
+            <a class="row" href="/manager/complaint/{{ c.complaint_reference }}">
+                <span class="prio {{ 'urgent' if c.priority in ['Urgent','Emergency'] else 'high' if c.priority == 'High' else 'normal' }}"></span>
+                <span class="row-main"><strong>{{ c.subject }}</strong><small>{{ c.complaint_reference }} · {{ c.properties.unit_number if c.properties else '—' }} · {{ c.tenants.full_name if c.tenants else '—' }}</small></span>
+                <span class="row-end"><span class="pill {{ 'red' if c.priority in ['Urgent','Emergency'] else 'blue' }}">{{ c.status }}</span></span>
+            </a>
+            {% else %}
+            <div class="empty-mini">{{ ico('check') }}<br>No open complaints.</div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<div class="m-grid">
+    <section class="panel">
+        <div class="panel-head"><h3>Contracts ending in 45 days</h3><a href="/manager/tenants">Tenants</a></div>
+        <div class="rows">
+            {% for t in ending %}
+            <a class="row" href="/manager/tenants">
+                <span class="row-av">{{ t.full_name[:1]|upper }}</span>
+                <span class="row-main"><strong>{{ t.full_name }}</strong><small>{{ t.properties.unit_number if t.properties else '—' }} · ends {{ t.contract_end }}</small></span>
+                <span class="row-end"><span class="pill {{ 'red' if t.days_left <= 14 else 'amber' }}">{{ t.days_left }} day{{ 's' if t.days_left != 1 }}</span></span>
+            </a>
+            {% else %}
+            <div class="empty-mini">No contracts ending soon.</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head"><h3>Recent booking requests</h3><a href="/manager/payments">Payments</a></div>
+        <div class="rows">
+            {% for a in apps %}
+            <a class="row" href="/manager/payments">
+                <span class="row-av">{{ a.full_name[:1]|upper }}</span>
+                <span class="row-main"><strong>{{ a.full_name }}</strong><small>{{ a.properties.property_type if a.properties else '' }} {{ a.properties.unit_number if a.properties else '' }} · {{ a.application_reference }}</small></span>
+                <span class="row-end"><span class="pill {{ 'green' if a.status == 'Approved' else 'red' if 'Rejected' in a.status else 'amber' }}">{{ a.status }}</span></span>
+            </a>
+            {% else %}
+            <div class="empty-mini">No booking requests yet.</div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

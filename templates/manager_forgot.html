@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Reset manager password{% endblock %}
+{% block content %}
+<div class="auth-wrap" style="--role: #3f5a73">
+  <div class="auth-shell auth-narrow">
+    <section class="auth-main">
+        <div class="auth-head"><div class="auth-icon">🔑</div>
+            <div><h1>Reset password</h1><p>We will email a reset link to the manager address.</p></div></div>
+        <form method="POST" class="auth-form">
+            <label for="email">Manager email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required autofocus>
+            <button type="submit" class="button role-btn button-large">Send reset link</button>
+        </form>
+        <p class="auth-switch"><a href="{{ url_for('login_role', role='manager') }}">← Back to login</a></p>
+    </section>
+  </div>
+</div>
+{% endblock %}

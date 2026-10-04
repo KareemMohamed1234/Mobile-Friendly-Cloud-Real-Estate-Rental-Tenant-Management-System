@@ -1,0 +1,36 @@
+{% extends "manager_base.html" %}
+{% block title %}Verify Payments{% endblock %}
+{% block crumb %}{{ self.title() }}{% endblock %}
+{% block content %}
+<h1>Payments to Verify</h1>
+
+{% if payments %}
+    {% for pay in payments %}
+    <div class="details-card payment-row">
+        <div>
+            {% if pay.tenants %}
+                <p><strong>{{ pay.tenants.full_name }}</strong></p>
+                <p>Property: {{ pay.tenants.properties.unit_number if pay.tenants.properties else '-' }}</p>
+            {% elif pay.applications %}
+                <p><strong>{{ pay.applications.full_name }}</strong> (New application)</p>
+                <p>Property: {{ pay.applications.properties.unit_number if pay.applications.properties else '-' }}</p>
+                <p>Ref: {{ pay.applications.application_reference }}</p>
+            {% endif %}
+            <p class="rent">QAR {{ "{:,.0f}".format(pay.amount) }}</p>
+            <p class="text-muted">Bank Ref: {{ pay.bank_reference or '-' }}{% if pay.transfer_date %} · Transferred {{ pay.transfer_date }}{% endif %} · {{ pay.created_at[:16].replace('T',' ') }}</p>
+        </div>
+        <div class="inline-buttons">
+            {% if pay.receipt_url %}
+                <a href="/receipt/{{ pay.id }}" target="_blank" class="button button-small">View Receipt</a>
+            {% endif %}
+            <form method="POST" action="/manager/payment/{{ pay.id }}/verify" class="inline-buttons">
+                <button name="action" value="confirm" class="button button-primary button-small">✔ Confirm Payment</button>
+                <button name="action" value="reject" class="button button-danger button-small">✘ Reject</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state"><p>✅ No payments waiting for verification.</p></div>
+{% endif %}
+{% endblock %}

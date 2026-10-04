@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "_macros.html" import property_card %}
+{% block title %}Find Your New Home{% endblock %}
+{% block main_class %}flush{% endblock %}
+{% block content %}
+<div class="hero-wrap">
+    <div class="hero" style="--hero-img: url('{{ stock('hero', 1800) }}')">
+        <span class="eyebrow">Rent with confidence</span>
+        <h1>Find a home that<br>feels like yours</h1>
+        <p>Rooms, studios, 1 BHK and 2 BHK apartments — real photos, clear monthly rent, simple bank-transfer booking.</p>
+    </div>
+</div>
+
+<form action="/properties" method="GET" class="search-form floating">
+    <div class="search-grid">
+        <div>
+            <label>Property type</label>
+            <select name="type">
+                <option value="">All types</option>
+                {% for t in PROPERTY_TYPES %}<option>{{ t }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>Location</label>
+            <select name="city">
+                <option value="">All locations</option>
+                {% for c in cities %}<option>{{ c }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>Max monthly rent (QAR)</label>
+            <input type="number" name="max_rent" placeholder="e.g. 5000" min="0">
+        </div>
+    </div>
+    <button type="submit" class="button button-primary">Search available properties</button>
+</form>
+
+<div class="type-chips">
+    {% for t in PROPERTY_TYPES %}<a href="/properties?type={{ t|urlencode }}">{{ t }}</a>{% endfor %}
+</div>
+
+{% if featured %}
+<div class="section-head"><h2>Latest available</h2><a href="/properties">See all →</a></div>
+<div class="property-grid">
+    {% for p in featured %}{{ property_card(p) }}{% endfor %}
+</div>
+{% endif %}
+
+<div class="section-head"><h2>How it works</h2></div>
+<div class="steps">
+    <div class="step"><div class="step-num">1</div><h3>Pick your place</h3><p>Browse real photos of every room, kitchen and bathroom, then check the rent and deposit.</p></div>
+    <div class="step"><div class="step-num">2</div><h3>Book &amp; transfer</h3><p>Apply online, get a booking reference, and pay by bank transfer to our IBAN.</p></div>
+    <div class="step"><div class="step-num">3</div><h3>Move in</h3><p>Upload your receipt. We confirm the payment and your tenant account is ready.</p></div>
+</div>
+
+<div class="cta-band" style="--cta-img: url('{{ stock('cta', 1600) }}')">
+    <h2>Already renting with us?</h2>
+    <p>Pay rent, download receipts and report maintenance problems from your phone.</p>
+    <a href="/login" class="button">Tenant login</a>
+</div>
+{% endblock %}

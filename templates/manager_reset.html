@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Choose a new password{% endblock %}
+{% block content %}
+<div class="auth-wrap" style="--role: #3f5a73">
+  <div class="auth-shell auth-narrow">
+    <section class="auth-main">
+        <div class="auth-head"><div class="auth-icon">🔑</div>
+            <div><h1>New password</h1><p>Choose a new manager password.</p></div></div>
+        <form method="POST" class="auth-form" data-auth-form>
+            <label for="password">New password</label>
+            <div class="pw-field">
+                <input type="password" id="password" name="password" minlength="8" autocomplete="new-password" required autofocus>
+                <button type="button" class="pw-toggle" onclick="togglePw(this)">Show</button>
+            </div>
+            <p class="text-muted pw-note">At least 8 characters.</p>
+            <label for="confirm">Confirm password</label>
+            <input type="password" id="confirm" name="confirm" autocomplete="new-password" required>
+            <button type="submit" class="button role-btn button-large">Save new password</button>
+        </form>
+    </section>
+  </div>
+</div>
+{% endblock %}

@@ -1,59 +1,85 @@
-# Real Estate Rental & Tenant Management System
+Real Estate Rental & Tenant Management System
 
-> **Project link:** https://dhueru5u.pythonanywhere.com
+Project link: https://dhueru5u.pythonanywhere.com
 
 A mobile-friendly web application for a property company. Visitors browse available rooms, studios and apartments, book a unit and pay by bank transfer. After the manager verifies the payment, the new tenant receives a login by email and manages rent, receipts and maintenance complaints online.
 
-Built with **Python, Flask, HTML/CSS/JavaScript and Supabase** (PostgreSQL, Auth, Storage).
+Built with Python, Flask, HTML/CSS/JavaScript and Supabase (PostgreSQL, Auth, Storage).
 
-## Table of contents
+Table of contents
 
-- [Features](#features)
-- [How it works](#how-it-works)
-- [Tech stack](#tech-stack)
-- [Architecture](#architecture)
-- [Project structure](#project-structure)
-- [Data model](#data-model)
-- [Getting started](#getting-started)
-- [Configuration](#configuration)
-- [Email setup (SMTP)](#email-setup-smtp)
-- [Usage guide](#usage-guide)
-- [Security](#security)
-- [Deployment](#deployment)
-- [Known limitations](#known-limitations)
+Features
 
-## Features
+How it works
 
-### Visitors (no account needed)
+Tech stack
 
-- Search available properties by type, city and maximum monthly rent
-- Photo gallery with thumbnails, swipe and full-screen view
-- Unit details: rent, deposit, bedrooms, bathrooms, capacity and description
-- Booking form that returns a reference such as `REA-2026-A1B2C3`
-- Bank transfer instructions with copy buttons for the IBAN and the reference
-- Receipt upload (image or PDF)
+Architecture
 
-### Tenants
+Project structure
 
-- Personal home page with unit details and the latest rent invoice
-- Rent invoices with status, bank transfer instructions and receipt upload
-- Payment history and printable receipts
-- Maintenance complaints with category, priority and a conversation thread with the manager
-- Confirmation of whether a repair solved the problem (Fixed closes it, Not Fixed reopens it)
-- Password change
+Data model
 
-### Manager
+Getting started
 
-- Console with sidebar, live counters and a dashboard: revenue, outstanding rent, occupancy, active tenants, six-month revenue chart, unit status chart, and work queues
-- Buildings, properties and photo management (multi-photo upload from a phone, main photo, captions)
-- Payment verification: confirm or reject each transfer after checking the bank account
-- Tenant management: monthly invoices, tenant creation, login details sent by email
-- Complaint handling: status, assignee, resolution note and comments
-- Password reset by email link
+Configuration
 
-## How it works
+Email setup (SMTP)
 
-```
+Usage guide
+
+Security
+
+Deployment
+
+Known limitations
+
+Features
+
+Visitors (no account needed)
+
+Search available properties by type, city and maximum monthly rent
+
+Photo gallery with thumbnails, swipe and full-screen view
+
+Unit details: rent, deposit, bedrooms, bathrooms, capacity and description
+
+Booking form that returns a reference such as REA-2026-A1B2C3
+
+Bank transfer instructions with copy buttons for the IBAN and the reference
+
+Receipt upload (image or PDF)
+
+Tenants
+
+Personal home page with unit details and the latest rent invoice
+
+Rent invoices with status, bank transfer instructions and receipt upload
+
+Payment history and printable receipts
+
+Maintenance complaints with category, priority and a conversation thread with the manager
+
+Confirmation of whether a repair solved the problem (Fixed closes it, Not Fixed reopens it)
+
+Password change
+
+Manager
+
+Console with sidebar, live counters and a dashboard: revenue, outstanding rent, occupancy, active tenants, six-month revenue chart, unit status chart, and work queues
+
+Buildings, properties and photo management (multi-photo upload from a phone, main photo, captions)
+
+Payment verification: confirm or reject each transfer after checking the bank account
+
+Tenant management: monthly invoices, tenant creation, login details sent by email
+
+Complaint handling: status, assignee, resolution note and comments
+
+Password reset by email link
+
+How it works
+
 Visitor selects a unit and books
         |
 Transfers money to the company IBAN and uploads the receipt
@@ -65,34 +91,49 @@ System approves the booking, reserves the unit and creates the tenant
 Login details are emailed to the address used for the booking
         |
 Tenant logs in: rent, receipts, complaints
-```
 
-Only two kinds of accounts exist: **manager** (one fixed account) and **tenant** (created by the manager). There is no public sign-up.
+Only two kinds of accounts exist: manager (one fixed account) and tenant (created by the manager). There is no public sign-up.
 
-## Tech stack
+Tech stack
 
-| Layer | Technology |
-| --- | --- |
-| Backend | Python 3, Flask |
-| Templates and UI | Jinja2, HTML, CSS, a small amount of JavaScript |
-| Database | Supabase PostgreSQL |
-| Authentication | Supabase Auth (email and password) |
-| File storage | Supabase Storage |
-| Email | SMTP (Python `smtplib`) |
+Layer
 
-## Architecture
+Technology
 
-```
+Backend
+
+Python 3, Flask
+
+Templates and UI
+
+Jinja2, HTML, CSS, a small amount of JavaScript
+
+Database
+
+Supabase PostgreSQL
+
+Authentication
+
+Supabase Auth (email and password)
+
+File storage
+
+Supabase Storage
+
+Email
+
+SMTP (Python smtplib)
+
+Architecture
+
 Browser  <--HTTPS-->  Flask app (app.py)  <--API-->  Supabase (PostgreSQL, Auth, Storage)
                              |
                              +--SMTP-->  Mail server
-```
 
 The browser never talks to Supabase directly. Flask is the only component that holds the Supabase keys and sends email. Row Level Security is enabled on every table with no policies, so the public key cannot read or write data.
 
-## Project structure
+Project structure
 
-```
 RealEstateApp/
 ├── app.py                    Server, routes, authentication, email
 ├── reset_manager.py          Sets the manager password in Supabase from .env
@@ -114,145 +155,239 @@ RealEstateApp/
     ├── tenant_*.html         Tenant portal
     ├── complaint_*.html      Tenant complaint pages
     └── manager_*.html        Manager pages
-```
 
-## Data model
+Data model
 
-| Table | Purpose |
-| --- | --- |
-| `buildings` | Buildings or sites |
-| `properties` | Rentable units: type, rent, deposit, capacity, status |
-| `property_photos` | Photo gallery of each unit |
-| `applications` | Booking requests from visitors |
-| `tenants` | People renting a unit, with contract dates and login link |
-| `rent_invoices` | One invoice per tenant per month |
-| `payments` | Bank transfers waiting for or past verification |
-| `complaints` | Maintenance requests |
-| `complaint_comments` | Conversation thread of a complaint |
-| `complaint_attachments` | Reserved for complaint photos (not used yet) |
-| `company_settings` | Company and bank details (bank name, account name, IBAN, currency) |
-| `profiles` | Role (`tenant` or `manager`) of each login |
+Table
+
+Purpose
+
+buildings
+
+Buildings or sites
+
+properties
+
+Rentable units: type, rent, deposit, capacity, status
+
+property_photos
+
+Photo gallery of each unit
+
+applications
+
+Booking requests from visitors
+
+tenants
+
+People renting a unit, with contract dates and login link
+
+rent_invoices
+
+One invoice per tenant per month
+
+payments
+
+Bank transfers waiting for or past verification
+
+complaints
+
+Maintenance requests
+
+complaint_comments
+
+Conversation thread of a complaint
+
+complaint_attachments
+
+Reserved for complaint photos (not used yet)
+
+company_settings
+
+Company and bank details (bank name, account name, IBAN, currency)
+
+profiles
+
+Role (tenant or manager) of each login
 
 Property statuses: Available, Reserved, Occupied, Maintenance, Unavailable.
 Complaint statuses: Open, Assigned, In Progress, Resolved - Waiting for Tenant, Closed, Reopened.
 
-## Getting started
+Getting started
 
-### Prerequisites
+Prerequisites
 
-- Python 3.10 or newer
-- A free [Supabase](https://supabase.com) project
-- A Gmail account for sending email (optional, see [Email setup](#email-setup-smtp))
+Python 3.10 or newer
 
-### 1. Clone and install
+A free Supabase project
 
-```bash
+A Gmail account for sending email (optional, see Email setup)
+
+1. Clone and install
+
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 cd YOUR-REPOSITORY
 
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-```
 
-On macOS or Linux, activate with `source .venv/bin/activate` instead.
+On macOS or Linux, activate with source .venv/bin/activate instead.
 
-### 2. Prepare Supabase
+2. Prepare Supabase
 
-1. Create a new Supabase project.
-2. Open **SQL Editor** and run `schema.sql`. It creates the tables, security rules and the two storage buckets (`property-images` and `receipts`).
-3. Optional: run `seed.sql` to load demo buildings, units, photos and a demo tenant.
-4. Open **Project Settings, API** and copy the project URL, the publishable key and the secret (service role) key.
+Create a new Supabase project.
 
-### 3. Configure
+Open SQL Editor and run schema.sql. It creates the tables, security rules and the two storage buckets (property-images and receipts).
 
-Copy `.env.example` to `.env` and fill in the values (see [Configuration](#configuration)).
+Optional: run seed.sql to load demo buildings, units, photos and a demo tenant.
 
-### 4. Run
+Open Project Settings, API and copy the project URL, the publishable key and the secret (service role) key.
 
-```bash
+3. Configure
+
+Copy .env.example to .env and fill in the values (see Configuration).
+
+4. Run
+
 python app.py
-```
 
-Open `http://127.0.0.1:5000`. On first start the manager account is created from `MANAGER_EMAIL` and `MANAGER_PASSWORD`. If you change the manager password in `.env` later, run `python reset_manager.py` to apply it to Supabase.
+Open http://127.0.0.1:5000. On first start the manager account is created from MANAGER_EMAIL and MANAGER_PASSWORD. If you change the manager password in .env later, run python reset_manager.py to apply it to Supabase.
 
-## Configuration
+Configuration
 
-All settings live in `.env`. Never commit this file.
+All settings live in .env. Never commit this file.
 
-| Variable | Description |
-| --- | --- |
-| `SUPABASE_URL` | Supabase project address |
-| `SUPABASE_PUBLISHABLE_KEY` | Public key, used only to check logins |
-| `SUPABASE_SERVICE_KEY` | Secret server key. Never share it. |
-| `FLASK_SECRET_KEY` | Long random string that signs sessions and reset links |
-| `MANAGER_EMAIL` | Email of the single manager account |
-| `MANAGER_PASSWORD` | Password for that account, at least 8 characters |
-| `MANAGER_NAME` | Display name of the manager |
-| `SMTP_HOST`, `SMTP_PORT` | Mail server, for example `smtp.gmail.com` and `587` |
-| `SMTP_USER`, `SMTP_PASSWORD` | Mail account and its app password |
-| `SMTP_FROM` | Sender address, normally the same as `SMTP_USER` |
-| `MAIL_FROM_NAME` | Sender name shown in emails |
-| `SITE_URL` | Public address of the site, used for links in emails |
+Variable
+
+Description
+
+SUPABASE_URL
+
+Supabase project address
+
+SUPABASE_PUBLISHABLE_KEY
+
+Public key, used only to check logins
+
+SUPABASE_SERVICE_KEY
+
+Secret server key. Never share it.
+
+FLASK_SECRET_KEY
+
+Long random string that signs sessions and reset links
+
+MANAGER_EMAIL
+
+Email of the single manager account
+
+MANAGER_PASSWORD
+
+Password for that account, at least 8 characters
+
+MANAGER_NAME
+
+Display name of the manager
+
+SMTP_HOST, SMTP_PORT
+
+Mail server, for example smtp.gmail.com and 587
+
+SMTP_USER, SMTP_PASSWORD
+
+Mail account and its app password
+
+SMTP_FROM
+
+Sender address, normally the same as SMTP_USER
+
+MAIL_FROM_NAME
+
+Sender name shown in emails
+
+SITE_URL
+
+Public address of the site, used for links in emails
 
 Generate a secret key with:
 
-```bash
 python -c "import secrets; print(secrets.token_hex(32))"
-```
 
-## Email setup (SMTP)
+Email setup (SMTP)
 
 The app sends two emails: the tenant's login details and the manager's password reset link.
 
 With Gmail:
 
-1. Turn on 2-Step Verification for the account.
-2. Create an app password at https://myaccount.google.com/apppasswords.
-3. Put it in `SMTP_PASSWORD` without spaces and set `SMTP_USER` and `SMTP_FROM` to the Gmail address.
-4. Restart the server after editing `.env`.
+Turn on 2-Step Verification for the account.
+
+Create an app password at https://myaccount.google.com/apppasswords.
+
+Put it in SMTP_PASSWORD without spaces and set SMTP_USER and SMTP_FROM to the Gmail address.
+
+Restart the server after editing .env.
 
 If SMTP is not configured the app keeps working. The manager sees a notice with the tenant's login to pass on, and the reset link is printed in the server log.
 
-## Usage guide
+Usage guide
 
-**As a visitor:** search on the home page, open a unit, press the booking button, fill in the form, transfer the amount to the shown IBAN and upload the receipt.
+As a visitor: search on the home page, open a unit, press the booking button, fill in the form, transfer the amount to the shown IBAN and upload the receipt.
 
-**As the manager:** log in at `/login/manager`.
+As the manager: log in at /login/manager.
 
-1. Open **Payments** and check each receipt against the bank account, then **Confirm** or **Reject**.
-2. Confirming approves the booking, reserves the unit, creates the tenant and emails the login.
-3. Open **Tenants** to create monthly invoices, add tenants manually, or resend login details with a new password.
-4. Open **Properties** to add units and upload photos.
-5. Open **Complaints** to assign, update and comment.
+Open Payments and check each receipt against the bank account, then Confirm or Reject.
 
-**As a tenant:** log in at `/login/tenant` with the emailed credentials, change the password, pay rent by transfer and upload receipts, and report problems.
+Confirming approves the booking, reserves the unit, creates the tenant and emails the login.
 
-## Security
+Open Tenants to create monthly invoices, add tenants manually, or resend login details with a new password.
 
-- Row Level Security is on for every table. Only the server, using the secret key, can access data.
-- Passwords are hashed by Supabase Auth. Generated tenant passwords use Python's `secrets` module.
-- Routes are guarded by role. Tenants see only their own invoices, payments, complaints and receipts.
-- Receipts are stored in a private bucket and opened through short-lived signed links.
-- The manager reset link is signed, expires after 30 minutes and works once.
-- Uploads are limited to images and PDFs, and redirect targets are validated.
-- `.env` is listed in `.gitignore`. Keep your keys and passwords out of the repository.
+Open Properties to add units and upload photos.
 
-## Deployment
+Open Complaints to assign, update and comment.
+
+As a tenant: log in at /login/tenant with the emailed credentials, change the password, pay rent by transfer and upload receipts, and report problems.
+
+Security
+
+Row Level Security is on for every table. Only the server, using the secret key, can access data.
+
+Passwords are hashed by Supabase Auth. Generated tenant passwords use Python's secrets module.
+
+Routes are guarded by role. Tenants see only their own invoices, payments, complaints and receipts.
+
+Receipts are stored in a private bucket and opened through short-lived signed links.
+
+The manager reset link is signed, expires after 30 minutes and works once.
+
+Uploads are limited to images and PDFs, and redirect targets are validated.
+
+.env is listed in .gitignore. Keep your keys and passwords out of the repository.
+
+Deployment
 
 The built-in server is for development only. For production:
 
-1. Install a production server, for example `pip install gunicorn`, and start it with `gunicorn app:app`.
-2. Set all variables from the table above in the host's environment settings instead of a file.
-3. Set `SITE_URL` to the public address of the site.
-4. Use a stable `FLASK_SECRET_KEY`.
-5. Serve the site over HTTPS.
+Install a production server, for example pip install gunicorn, and start it with gunicorn app:app.
 
-## Known limitations
+Set all variables from the table above in the host's environment settings instead of a file.
 
-- Payment confirmation and booking approval are one action.
-- Rent invoices are created manually, and nothing marks an invoice overdue automatically.
-- Visitors cannot track a booking after the confirmation page.
-- The photo field on the complaint form is not saved yet.
-- Bank details are edited in the `company_settings` table in Supabase, there is no settings page.
-- Demo photos are sample images from Unsplash. Replace them with your own through the manager console.
+Set SITE_URL to the public address of the site.
+
+Use a stable FLASK_SECRET_KEY.
+
+Serve the site over HTTPS.
+
+Known limitations
+
+Payment confirmation and booking approval are one action.
+
+Rent invoices are created manually, and nothing marks an invoice overdue automatically.
+
+Visitors cannot track a booking after the confirmation page.
+
+The photo field on the complaint form is not saved yet.
+
+Bank details are edited in the company_settings table in Supabase, there is no settings page.
+
+Demo photos are sample images from Unsplash. Replace them with your own through the manager console.

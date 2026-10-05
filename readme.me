@@ -1,4 +1,4 @@
-Real Estate Rental & Tenant Management System
+<h1 align="center">Real Estate Rental & Tenant Management System</h1>
 
 Project link: https://dhueru5u.pythonanywhere.com
 
@@ -6,7 +6,7 @@ A mobile-friendly web application for a property company. Visitors browse availa
 
 Built with Python, Flask, HTML/CSS/JavaScript and Supabase (PostgreSQL, Auth, Storage).
 
-Table of contents
+<h2>🟦 Table of contents</h2>
 
 Features
 
@@ -34,9 +34,9 @@ Deployment
 
 Known limitations
 
-Features
+<h2>🟦 Features</h2>
 
-Visitors (no account needed)
+<h3>🔹 Visitors (no account needed)</h3>
 
 Search available properties by type, city and maximum monthly rent
 
@@ -50,7 +50,7 @@ Bank transfer instructions with copy buttons for the IBAN and the reference
 
 Receipt upload (image or PDF)
 
-Tenants
+<h3>🔹 Tenants</h3>
 
 Personal home page with unit details and the latest rent invoice
 
@@ -64,7 +64,7 @@ Confirmation of whether a repair solved the problem (Fixed closes it, Not Fixed 
 
 Password change
 
-Manager
+<h3>🔹 Manager</h3>
 
 Console with sidebar, live counters and a dashboard: revenue, outstanding rent, occupancy, active tenants, six-month revenue chart, unit status chart, and work queues
 
@@ -78,7 +78,7 @@ Complaint handling: status, assignee, resolution note and comments
 
 Password reset by email link
 
-How it works
+<h2>🟦 How it works</h2>
 
 Visitor selects a unit and books
         |
@@ -94,7 +94,7 @@ Tenant logs in: rent, receipts, complaints
 
 Only two kinds of accounts exist: manager (one fixed account) and tenant (created by the manager). There is no public sign-up.
 
-Tech stack
+<h2>🟦 Tech stack</h2>
 
 Layer
 
@@ -124,7 +124,7 @@ Email
 
 SMTP (Python smtplib)
 
-Architecture
+<h2>🟦 Architecture</h2>
 
 Browser  <--HTTPS-->  Flask app (app.py)  <--API-->  Supabase (PostgreSQL, Auth, Storage)
                              |
@@ -132,7 +132,7 @@ Browser  <--HTTPS-->  Flask app (app.py)  <--API-->  Supabase (PostgreSQL, Auth,
 
 The browser never talks to Supabase directly. Flask is the only component that holds the Supabase keys and sends email. Row Level Security is enabled on every table with no policies, so the public key cannot read or write data.
 
-Project structure
+<h2>🟦 Project structure</h2>
 
 RealEstateApp/
 ├── app.py                    Server, routes, authentication, email
@@ -156,7 +156,7 @@ RealEstateApp/
     ├── complaint_*.html      Tenant complaint pages
     └── manager_*.html        Manager pages
 
-Data model
+<h2>🟦 Data model</h2>
 
 Table
 
@@ -213,9 +213,9 @@ Role (tenant or manager) of each login
 Property statuses: Available, Reserved, Occupied, Maintenance, Unavailable.
 Complaint statuses: Open, Assigned, In Progress, Resolved - Waiting for Tenant, Closed, Reopened.
 
-Getting started
+<h2>🟦 Getting started</h2>
 
-Prerequisites
+<h3>🔹 Prerequisites</h3>
 
 Python 3.10 or newer
 
@@ -223,7 +223,7 @@ A free Supabase project
 
 A Gmail account for sending email (optional, see Email setup)
 
-1. Clone and install
+<h3>🔹 1. Clone and install</h3>
 
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 cd YOUR-REPOSITORY
@@ -234,7 +234,7 @@ pip install -r requirements.txt
 
 On macOS or Linux, activate with source .venv/bin/activate instead.
 
-2. Prepare Supabase
+<h3>🔹 2. Prepare Supabase</h3>
 
 Create a new Supabase project.
 
@@ -244,17 +244,17 @@ Optional: run seed.sql to load demo buildings, units, photos and a demo tenant.
 
 Open Project Settings, API and copy the project URL, the publishable key and the secret (service role) key.
 
-3. Configure
+<h3>🔹 3. Configure</h3>
 
 Copy .env.example to .env and fill in the values (see Configuration).
 
-4. Run
+<h3>🔹 4. Run</h3>
 
 python app.py
 
 Open http://127.0.0.1:5000. On first start the manager account is created from MANAGER_EMAIL and MANAGER_PASSWORD. If you change the manager password in .env later, run python reset_manager.py to apply it to Supabase.
 
-Configuration
+<h2>🟦 Configuration</h2>
 
 All settings live in .env. Never commit this file.
 
@@ -314,7 +314,7 @@ Generate a secret key with:
 
 python -c "import secrets; print(secrets.token_hex(32))"
 
-Email setup (SMTP)
+<h2>🟦 Email setup (SMTP)</h2>
 
 The app sends two emails: the tenant's login details and the manager's password reset link.
 
@@ -330,7 +330,7 @@ Restart the server after editing .env.
 
 If SMTP is not configured the app keeps working. The manager sees a notice with the tenant's login to pass on, and the reset link is printed in the server log.
 
-Usage guide
+<h2>🟦 Usage guide</h2>
 
 As a visitor: search on the home page, open a unit, press the booking button, fill in the form, transfer the amount to the shown IBAN and upload the receipt.
 
@@ -348,7 +348,7 @@ Open Complaints to assign, update and comment.
 
 As a tenant: log in at /login/tenant with the emailed credentials, change the password, pay rent by transfer and upload receipts, and report problems.
 
-Security
+<h2>🟦 Security</h2>
 
 Row Level Security is on for every table. Only the server, using the secret key, can access data.
 
@@ -364,7 +364,7 @@ Uploads are limited to images and PDFs, and redirect targets are validated.
 
 .env is listed in .gitignore. Keep your keys and passwords out of the repository.
 
-Deployment
+<h2>🟦 Deployment</h2>
 
 The built-in server is for development only. For production:
 
@@ -378,7 +378,7 @@ Use a stable FLASK_SECRET_KEY.
 
 Serve the site over HTTPS.
 
-Known limitations
+<h2>🟦 Known limitations</h2>
 
 Payment confirmation and booking approval are one action.
 

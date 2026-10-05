@@ -81,15 +81,15 @@ Password reset by email link
 <h2>🟦 How it works</h2>
 
 Visitor selects a unit and books
-        |
+|
 Transfers money to the company IBAN and uploads the receipt
-        |
+|
 Manager checks the bank account and confirms the payment
-        |
+|
 System approves the booking, reserves the unit and creates the tenant
-        |
+|
 Login details are emailed to the address used for the booking
-        |
+|
 Tenant logs in: rent, receipts, complaints
 
 Only two kinds of accounts exist: manager (one fixed account) and tenant (created by the manager). There is no public sign-up.
@@ -126,35 +126,35 @@ SMTP (Python smtplib)
 
 <h2>🟦 Architecture</h2>
 
-Browser  <--HTTPS-->  Flask app (app.py)  <--API-->  Supabase (PostgreSQL, Auth, Storage)
-                             |
-                             +--SMTP-->  Mail server
+Browser <--HTTPS--> Flask app (app.py) <--API--> Supabase (PostgreSQL, Auth, Storage)
+|
++--SMTP--> Mail server
 
 The browser never talks to Supabase directly. Flask is the only component that holds the Supabase keys and sends email. Row Level Security is enabled on every table with no policies, so the public key cannot read or write data.
 
 <h2>🟦 Project structure</h2>
 
 RealEstateApp/
-├── app.py                    Server, routes, authentication, email
-├── reset_manager.py          Sets the manager password in Supabase from .env
-├── schema.sql                Tables, indexes, security rules, storage buckets
-├── seed.sql                  Demo buildings, units, photos and one tenant
+├── app.py Server, routes, authentication, email
+├── reset*manager.py Sets the manager password in Supabase from .env
+├── schema.sql Tables, indexes, security rules, storage buckets
+├── seed.sql Demo buildings, units, photos and one tenant
 ├── requirements.txt
-├── .env.example              Settings template
+├── .env.example Settings template
 ├── static/
-│   ├── css/style.css         Public site and tenant pages
-│   ├── css/manager.css       Manager console
-│   ├── js/app.js             Menu, copy buttons, gallery
-│   └── images/
+│ ├── css/style.css Public site and tenant pages
+│ ├── css/manager.css Manager console
+│ ├── js/app.js Menu, copy buttons, gallery
+│ └── images/
 └── templates/
-    ├── base.html             Public and tenant layout
-    ├── manager_base.html     Manager console layout
-    ├── index.html, properties.html, property_details.html
-    ├── application.html, payment.html, payment_confirmation.html
-    ├── login_chooser.html, auth_form.html
-    ├── tenant_*.html         Tenant portal
-    ├── complaint_*.html      Tenant complaint pages
-    └── manager_*.html        Manager pages
+├── base.html Public and tenant layout
+├── manager_base.html Manager console layout
+├── index.html, properties.html, property_details.html
+├── application.html, payment.html, payment_confirmation.html
+├── login_chooser.html, auth_form.html
+├── tenant*_.html Tenant portal
+├── complaint\__.html Tenant complaint pages
+└── manager\_\*.html Manager pages
 
 <h2>🟦 Data model</h2>
 

@@ -132,30 +132,37 @@ Browser <--HTTPS--> Flask app (app.py) <--API--> Supabase (PostgreSQL, Auth, Sto
 
 The browser never talks to Supabase directly. Flask is the only component that holds the Supabase keys and sends email. Row Level Security is enabled on every table with no policies, so the public key cannot read or write data.
 
-<h2>🟦 Project structure</h2>
-```
-RealEstateApp/
-├── app.py Server, routes, authentication, email
-├── reset*manager.py Sets the manager password in Supabase from .env
-├── schema.sql Tables, indexes, security rules, storage buckets
-├── seed.sql Demo buildings, units, photos and one tenant
-├── requirements.txt
-├── .env.example Settings template
-├── static/
-│ ├── css/style.css Public site and tenant pages
-│ ├── css/manager.css Manager console
-│ ├── js/app.js Menu, copy buttons, gallery
-│ └── images/
-└── templates/
-├── base.html Public and tenant layout
-├── manager_base.html Manager console layout
-├── index.html, properties.html, property_details.html
-├── application.html, payment.html, payment_confirmation.html
-├── login_chooser.html, auth_form.html
-├── tenant*\_.html Tenant portal
-├── complaint\_\_.html Tenant complaint pages
-└── manager\_\*.html Manager pages
+## 📁 Project structure
 
+```text
+RealEstateApp/
+├── app.py                            # Server, routes, authentication, email
+├── reset_manager.py                  # Sets the manager password in Supabase from .env
+├── schema.sql                        # Tables, indexes, security rules, storage buckets
+├── seed.sql                          # Demo buildings, units, photos and one tenant
+├── requirements.txt                  # Python dependencies
+├── .env.example                      # Settings template
+├── static/
+│   ├── css/
+│   │   ├── style.css                 # Public site and tenant pages
+│   │   └── manager.css               # Manager console
+│   ├── js/
+│   │   └── app.js                    # Menu, copy buttons, gallery
+│   └── images/
+└── templates/
+    ├── base.html                     # Public and tenant layout
+    ├── manager_base.html             # Manager console layout
+    ├── index.html                    # Homepage and property search
+    ├── properties.html               # Search results list
+    ├── property_details.html         # Single property view
+    ├── application.html              # Rental application form
+    ├── payment.html                  # IBAN payment and upload receipt
+    ├── payment_confirmation.html     # Application status page
+    ├── login_chooser.html            # Login role selection
+    ├── auth_form.html                # Shared authentication form
+    ├── tenant_*.html                 # Tenant portal pages
+    ├── complaint_*.html              # Tenant complaint pages
+    └── manager_*.html                # Manager admin pages
 ```
 
 <h2>🟦 Data model</h2>
@@ -393,4 +400,7 @@ The photo field on the complaint form is not saved yet.
 Bank details are edited in the company_settings table in Supabase, there is no settings page.
 
 Demo photos are sample images from Unsplash. Replace them with your own through the manager console.
+
+```
+
 ```

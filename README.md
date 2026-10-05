@@ -133,7 +133,7 @@ Browser <--HTTPS--> Flask app (app.py) <--API--> Supabase (PostgreSQL, Auth, Sto
 The browser never talks to Supabase directly. Flask is the only component that holds the Supabase keys and sends email. Row Level Security is enabled on every table with no policies, so the public key cannot read or write data.
 
 <h2>🟦 Project structure</h2>
-
+```
 RealEstateApp/
 ├── app.py Server, routes, authentication, email
 ├── reset*manager.py Sets the manager password in Supabase from .env
@@ -152,9 +152,11 @@ RealEstateApp/
 ├── index.html, properties.html, property_details.html
 ├── application.html, payment.html, payment_confirmation.html
 ├── login_chooser.html, auth_form.html
-├── tenant*_.html Tenant portal
-├── complaint\__.html Tenant complaint pages
+├── tenant*\_.html Tenant portal
+├── complaint\_\_.html Tenant complaint pages
 └── manager\_\*.html Manager pages
+
+```
 
 <h2>🟦 Data model</h2>
 
@@ -391,3 +393,4 @@ The photo field on the complaint form is not saved yet.
 Bank details are edited in the company_settings table in Supabase, there is no settings page.
 
 Demo photos are sample images from Unsplash. Replace them with your own through the manager console.
+```
